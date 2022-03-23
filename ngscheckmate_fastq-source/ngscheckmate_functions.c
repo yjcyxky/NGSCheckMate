@@ -41,8 +41,14 @@ hash* read_patternfile_construct_hash(char* patternfilename){
 
     max_index=0;
     k=0;
+    printf("Size: %d\n", sizeof(Patternline));
     while(fread(&patternline,sizeof(Patternline),1,pattern_file) != 0){
        convert2str(patternline.pattern,&patternstr,&rcpatternstr);
+      //  int i = 0;
+      //  for (i=0; i < sizeof(patternline.pattern); i++) {
+      //    printf("Pattern: %c %d\n", patternline.pattern[i], patternline.index);
+      //  }
+        
        store_each_pattern(patternstr,0,patternline.index,h);  // reference allele
        store_each_pattern(rcpatternstr,0,patternline.index,h);  // reference allele, rc
        if(k==0) offset=(PATTERNLEN-1)/2;
@@ -57,11 +63,13 @@ hash* read_patternfile_construct_hash(char* patternfilename){
              store_each_pattern(rcpatternstr,1,patternline.index,h);  // alt allele, rc
           }
        }
+
        if(patternline.index>max_index) max_index=patternline.index;
        k++;
        if(k==3) k=0;
        if(patternstr!=NULL) free(patternstr); patternstr=NULL;
        if(rcpatternstr!=NULL) free(rcpatternstr); rcpatternstr=NULL;
+       printf("\n");
     }
     fclose(pattern_file);
     return(h);
@@ -73,6 +81,14 @@ void store_each_pattern (char* pattern, char ref_or_alt, int index, hash* h){
        hashval.c=ref_or_alt;
        hashval.i=index;
        insert_into_hash(pattern,strlen(pattern),hashval,h);
+
+       printf("%d|%d|", index, ref_or_alt);
+       int i = 0;
+       for (i=0; i < strlen(pattern); i++) {
+         printf("%c", pattern[i]);
+       }
+
+       printf("\t");
 }
 
 
